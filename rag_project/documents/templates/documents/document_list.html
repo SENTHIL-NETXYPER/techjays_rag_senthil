@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Documents</title>
+    <meta charset="utf-8">
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+
+    #app {
+        display: flex;
+        height: 100vh;
+    }
+
+    /* ---------- Sidebar ---------- */
+
+    #sidebar {
+        width: 220px;
+        padding: 15px;
+        border-right: 1px solid #ccc;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #sidebar h2 {
+        margin: 0 0 10px 0;
+    }
+
+    #sidebar a {
+        display: block;
+        margin-bottom: 10px;
+        text-decoration: none;
+        color: #000;
+        border: 1px solid #ccc;
+        padding: 6px 10px;
+    }
+
+    #sidebar a:hover {
+        background: #eee;
+    }
+
+    /* ---------- Main ---------- */
+
+    #main-chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #main-chat header {
+        padding: 15px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    #main-chat header h2 {
+        margin: 0 0 5px 0;
+    }
+
+    #main-chat header p {
+        margin: 0;
+        color: #555;
+    }
+
+    #doc-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    .document {
+        border: 1px solid #ddd;
+        padding: 12px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .document-title {
+        font-weight: bold;
+    }
+
+    .document-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .document-actions a {
+        text-decoration: none;
+    }
+
+    button {
+        padding: 6px 14px;
+        cursor: pointer;
+    }
+
+</style>
+</head>
+
+<body>
+
+    <div id="app">
+
+        <!-- Sidebar -->
+        <aside id="sidebar">
+
+            <h2>Documents</h2>
+
+            <a href="{% url 'upload' %}">+ Upload</a>
+
+        </aside>
+
+
+        <!-- Main -->
+        <main id="main-chat">
+
+            <header>
+                <h2>My Documents</h2>
+                <p>Select a document to chat with, or delete it.</p>
+            </header>
+
+
+            <div id="doc-list">
+
+                {% for document in documents %}
+
+                    <div class="document">
+
+                        <div class="document-title">
+                            {{ document.title }}
+                        </div>
+
+                        <div class="document-actions">
+
+                            <a href="{% url 'chat' document.id %}">
+                                <button>Chat</button>
+                            </a>
+
+                            <a href="{% url 'delete_doc' document.id %}">
+                                <button>Delete</button>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <p>No documents uploaded yet.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

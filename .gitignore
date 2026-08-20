@@ -1,0 +1,43 @@
+# Python / Byte-code
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Django files
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+rag_project/media/
+
+# Vector Store / ChromaDB storage
+chroma_db/
+rag_project/chroma_db/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+wheels/

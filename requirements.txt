@@ -1,0 +1,15 @@
+# Core Web Framework
+django>=5.1.0
+
+# Vector Database & Embeddings
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+
+# Document Processing & Text Extraction
+pymupdf>=1.24.0
+pypdf>=5.0.0
+langchain-text-splitters>=0.3.0
+
+# LLM Integration & API
+openai>=1.30.0
+python-dotenv>=1.0.0
