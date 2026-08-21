@@ -56,27 +56,27 @@ Users can ask questions about the selected document and view persistent conversa
 
 ```mermaid
 flowchart TD
-    User(["User"]) -->|Uploads PDF| DjangoUpload["Django View: upload"]
-    DjangoUpload -->|Validate & Save| SQLite[("Django SQLite DB")]
-    DjangoUpload -->|Extract Text| PyMuPDF["PyMuPDF / fitz"]
-    PyMuPDF -->|Raw Text| TextChunker["RecursiveCharacterTextSplitter<br/>Chunk Size: 500, Overlap: 50"]
-    TextChunker -->|Text Chunks| Encoder["SentenceTransformer<br/>all-MiniLM-L6-v2"]
-    Encoder -->|Vector Embeddings| ChromaDB[("ChromaDB Persistent Store<br/>Metadata: document_id")]
+    User(["User"]) -->|1. Upload PDF| DjangoUpload["Django View: upload"]
+    DjangoUpload -->|2. Store Metadata & File| SQLite[("Django SQLite DB")]
+    DjangoUpload -->|3. Extract Raw Text| PyMuPDF["PyMuPDF / fitz"]
+    PyMuPDF -->|4. Split into Chunks| TextChunker["RecursiveCharacterTextSplitter<br/>(500 chars, 50 overlap)"]
+    TextChunker -->|5. Pass Text Chunks| Encoder["SentenceTransformer<br/>(all-MiniLM-L6-v2)"]
+    Encoder -->|6. Store Embeddings & Metadata| ChromaDB[("ChromaDB Vector Store<br/>Filter Metadata: document_id")]
 ```
 
 ### Query & Answer Generation Pipeline
 
 ```mermaid
 flowchart TD
-    UserQ(["User Question"]) -->|POST question| DjangoChat["Django View: chat"]
-    DjangoChat -->|Fetch Context| RAGPipeline["RAG Pipeline: ask_question"]
-    RAGPipeline -->|Encode Question| QueryEncoder["SentenceTransformer"]
-    QueryEncoder -->|Question Embedding| ChromaDB[("ChromaDB Vector Store")]
-    ChromaDB -->|Filter by document_id<br/>Top-3 Chunks| RAGPipeline
-    RAGPipeline -->|Context + Question| OpenAI["OpenAI LLM API<br/>gpt-4.1-mini"]
-    OpenAI -->|Generated Answer| DjangoChat
-    DjangoChat -->|Save ChatMessage| SQLite[("Django SQLite DB")]
-    DjangoChat -->|Render Response| UserQ
+    UserQ(["User Question"]) -->|1. Submit Question| DjangoChat["Django View: chat"]
+    DjangoChat -->|2. Invoke RAG Pipeline| RAGPipeline["RAG Pipeline: ask_question"]
+    RAGPipeline -->|3. Generate Question Vector| QueryEncoder["SentenceTransformer<br/>(all-MiniLM-L6-v2)"]
+    QueryEncoder -->|4. Query Vector Index| ChromaDB[("ChromaDB Vector Store<br/>where: document_id")]
+    ChromaDB -->|5. Retrieve Top-3 Chunks| ContextBuilder["Context Assembly<br/>(Combine Relevant Text)"]
+    ContextBuilder -->|6. Prompt with Context + Question| OpenAI["OpenAI LLM API<br/>(gpt-4.1-mini)"]
+    OpenAI -->|7. Return Generated Answer| DjangoChat
+    DjangoChat -->|8. Save to Chat History| SQLite[("Django SQLite DB")]
+    DjangoChat -->|9. Render Answer on UI| UserQ
 ```
 
 ---
