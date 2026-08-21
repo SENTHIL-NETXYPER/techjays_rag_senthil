@@ -56,26 +56,26 @@ Users can ask questions about the selected document and view persistent conversa
 
 ```mermaid
 flowchart TD
-    User([User]) -->|Uploads PDF| DjangoUpload[Django View: upload]
-    DjangoUpload -->|Validate & Save| SQLite[(Django SQLite DB)]
-    DjangoUpload -->|Extract Text| PyMuPDF[PyMuPDF / fitz]
-    PyMuPDF -->|Raw Text| TextChunker[RecursiveCharacterTextSplitter\nChunk Size: 500 | Overlap: 50]
-    TextChunker -->|Text Chunks| Encoder[SentenceTransformer\nall-MiniLM-L6-v2]
-    Encoder -->|Vector Embeddings| ChromaDB[(ChromaDB Persistent Store\nMetadata: document_id)]
+    User(["User"]) -->|Uploads PDF| DjangoUpload["Django View: upload"]
+    DjangoUpload -->|Validate & Save| SQLite[("Django SQLite DB")]
+    DjangoUpload -->|Extract Text| PyMuPDF["PyMuPDF / fitz"]
+    PyMuPDF -->|Raw Text| TextChunker["RecursiveCharacterTextSplitter<br/>Chunk Size: 500, Overlap: 50"]
+    TextChunker -->|Text Chunks| Encoder["SentenceTransformer<br/>all-MiniLM-L6-v2"]
+    Encoder -->|Vector Embeddings| ChromaDB[("ChromaDB Persistent Store<br/>Metadata: document_id")]
 ```
 
 ### Query & Answer Generation Pipeline
 
 ```mermaid
 flowchart TD
-    UserQ([User Question]) -->|POST question| DjangoChat[Django View: chat]
-    DjangoChat -->|Fetch Context| RAGPipeline[RAG Pipeline: ask_question]
-    RAGPipeline -->|Encode Question| QueryEncoder[SentenceTransformer]
-    QueryEncoder -->|Question Embedding| ChromaDB[(ChromaDB Vector Store)]
-    ChromaDB -->|Filter by document_id\nTop-3 Chunks| RAGPipeline
-    RAGPipeline -->|Context + Question| OpenAI[OpenAI LLM API\ngpt-4.1-mini]
+    UserQ(["User Question"]) -->|POST question| DjangoChat["Django View: chat"]
+    DjangoChat -->|Fetch Context| RAGPipeline["RAG Pipeline: ask_question"]
+    RAGPipeline -->|Encode Question| QueryEncoder["SentenceTransformer"]
+    QueryEncoder -->|Question Embedding| ChromaDB[("ChromaDB Vector Store")]
+    ChromaDB -->|Filter by document_id<br/>Top-3 Chunks| RAGPipeline
+    RAGPipeline -->|Context + Question| OpenAI["OpenAI LLM API<br/>gpt-4.1-mini"]
     OpenAI -->|Generated Answer| DjangoChat
-    DjangoChat -->|Save ChatMessage| SQLite[(Django SQLite DB)]
+    DjangoChat -->|Save ChatMessage| SQLite[("Django SQLite DB")]
     DjangoChat -->|Render Response| UserQ
 ```
 
